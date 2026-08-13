@@ -146,9 +146,15 @@ Error generating stack: `+e.message+`
           if (!projectId) return;
           const target = document.getElementById(projectId);
           if (target) {
-            target.scrollIntoView({ block: "start", behavior: attempt ? "auto" : "smooth" });
+            const destination = Math.max(0, window.scrollY + target.getBoundingClientRect().top - 110);
+            window.scrollTo(0, destination);
+            document.documentElement.scrollTop = destination;
+            document.body.scrollTop = destination;
             target.classList.add("direct-project-target");
             window.setTimeout(() => target.classList.remove("direct-project-target"), 1800);
+            if (attempt < 50 && Math.abs(target.getBoundingClientRect().top - 110) > 40) {
+              window.setTimeout(() => positionProject(attempt + 1), 100);
+            }
             return;
           }
           if (attempt < 50) window.setTimeout(() => positionProject(attempt + 1), 100);
